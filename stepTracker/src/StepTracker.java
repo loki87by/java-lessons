@@ -1,24 +1,23 @@
 import java.util.HashMap;
 
 public class StepTracker {
-    static HashMap<Integer, MonthData> monthData = new HashMap<Integer, MonthData>();
-    static int stepsTarget = 10000;
+    HashMap<Integer, MonthData> monthData = new HashMap<Integer, MonthData>();
+    private int stepsTarget = 10000;
 
-    public static void StepTracker() {
+    public StepTracker() {
         for (int i = 0; i < 12; i++) {
             MonthData month = new MonthData();
             month.init();
             monthData.put(i, month);
-            System.out.println(i);
         }
     }
 
-    public static void ChangeTarget(Integer arg) {
+    public void ChangeTarget(Integer arg) {
         stepsTarget = arg;
     }
 
-    public static class MonthData {
-        static HashMap<Integer, Day> days = new HashMap<>();
+    public class MonthData {
+        HashMap<Integer, Day> days = new HashMap<>();
 
         private void init() {
             for (int i = 0; i < 30; i++) {
@@ -27,7 +26,7 @@ public class StepTracker {
             }
         }
 
-        public void GetStatistic() {
+        public void getStatistic() {
             int sum = 0;
             int max = 0;
             int series = 0;
@@ -42,12 +41,13 @@ public class StepTracker {
                     bestSeries = Math.max(bestSeries, series);
                     series = 0;
                 } else {
-                    series++;
+                    ++series;
                 }
                 if (day < days.size()-1) {
                     System.out.print(", ");
                 } else {
                     System.out.println(' ');
+                    bestSeries = Math.max(bestSeries, series);
                 }
             }
             System.out.println("Общее количество шагов за месяц: "+ sum);
@@ -58,17 +58,17 @@ public class StepTracker {
             System.out.println("Лучшая серия: "+ bestSeries + " дней.");
         }
 
-        public static void SetSteps(Integer day, Integer steps) {
+        public void setSteps(Integer day, Integer steps) {
             days.get(day).SetSteps(steps);
         }
     }
 
-    static class Converter {
+    public static class Converter {
         static double distance = 0.0;
         static double kcals = 0.0;
         public static void SetData(int steps) {
             distance += steps / 1000 * .75;
-            kcals = +steps * 50 / 1000;
+            kcals += steps * 50 / 1000;
         }
         public static double GetDistance() {
             return distance;
@@ -78,12 +78,12 @@ public class StepTracker {
         }
     }
 
-    static class Day {
-        static int steps = 0;
-        public static void SetSteps(Integer current) {
+    public class Day {
+        int steps = 0;
+        public void SetSteps(Integer current) {
             steps = current;
         }
-        public static int GetSteps() {
+        public int GetSteps() {
             return steps;
         }
     }

@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        StepTracker stepTracker = new StepTracker();
         printMenu();
         int userInput = scanner.nextInt();
         int tmpInput;
@@ -18,7 +19,7 @@ public class Main {
                     tmpInput = scanner.nextInt();
                 }
                 if (userInput == 2) {
-                    StepTracker.monthData.get(--tmpInput).GetStatistic();
+                    stepTracker.monthData.get(--tmpInput).getStatistic();
                 } else {
                     System.out.println("Введи дату(от 1 до 30)");
                     dayInput = scanner.nextInt();
@@ -32,12 +33,12 @@ public class Main {
                         System.out.println("Я понимаю, что ты лентяй, но не на столько, давай положительное число");
                         stepsInput = scanner.nextInt();
                     }
-                    StepTracker.monthData.get(--tmpInput).SetSteps(--dayInput, stepsInput);
+                    stepTracker.monthData.get(--tmpInput).setSteps(--dayInput, stepsInput);
                 }
             } else if (userInput == 3) {
                 System.out.println("Введи количество");
                 tmpInput = scanner.nextInt();
-                StepTracker.ChangeTarget(tmpInput);
+                stepTracker.ChangeTarget(tmpInput);
             } else {
                 System.out.println("Херню ввёл, попробуем еще раз");
             }
