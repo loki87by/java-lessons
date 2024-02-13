@@ -33,6 +33,7 @@ public class Main {
                 MonthReportRead monthReportRead = new MonthReportRead(path, yearInput, monthInput);
                 monthlyReport = new MonthlyReport();
                 monthlyReport.setData(monthReportRead.monthData);
+                monthlyReport.getData();
             } else if (userInput == 2) {
                 System.out.println("Считать годовой отчёт");
             } else if (userInput == 3) {
@@ -63,6 +64,10 @@ public class Main {
 
     public static class MonthlyReport {
         HashMap<Integer, MonthReportRead.MonthData> monthData = new HashMap<>();
+        ArrayList<String> isExpencesNames = new ArrayList<>();
+        ArrayList<String> isntExpencesNames = new ArrayList<>();
+        ArrayList<Integer> isntExpencesSums = new ArrayList<>();
+        ArrayList<Integer> isExpencesSums = new ArrayList<>();
 
         void setData(HashMap<Integer, MonthReportRead.MonthData> md) {
             monthData = md;
@@ -70,38 +75,56 @@ public class Main {
             topExpence(md);
         }
 
-        void topSale(HashMap<Integer, MonthReportRead.MonthData> monthData) {
-            ArrayList<Integer> summs = new ArrayList<>();
-            for (int i = 1; i <= monthData.size(); i++) {
-                MonthReportRead.MonthData data = monthData.get(i);
-                if (!data.expence) {
-                    int sum = data.quantity * data.coast;
-                    summs.add(sum);
-                } else {
-                    summs.add(0);
+        void getData() {
+            if (!isExpencesNames.isEmpty() && !isntExpencesNames.isEmpty() && !isntExpencesSums.isEmpty() && !isExpencesSums.isEmpty()) {
+                for (int i = 1; i <= monthData.size(); i++) {
+                    MonthReportRead.MonthData data = monthData.get(i);
+                    System.out.print("В " + data.monthName + " больше всего доходов по товару '" + isntExpencesNames.get(i-1) + "' на сумму: " + isntExpencesSums.get(i-1));
+                    System.out.println(", а расходов по товару '" + isExpencesNames.get(i-1) + "' на сумму: " + isExpencesSums.get(i-1));
                 }
             }
-            int max = Collections.max(summs);
-            int indexOfMax = summs.indexOf(max);
-            String nameOfMax = monthData.get(indexOfMax).item;
-            System.out.println("Больше всего доходов по товару '" + nameOfMax + "' на сумму: " + max);
+        }
+
+        void topSale(HashMap<Integer, MonthReportRead.MonthData> monthData) {
+            for (int i = 1; i <= monthData.size(); i++) {
+                ArrayList<Integer> summs = new ArrayList<>();
+                MonthReportRead.MonthData data = monthData.get(i);
+                for (int j = 0; j < data.getSize(); j++) {
+                    if (!data.expences.get(j)) {
+                        int sum = data.quantitys.get(j) * data.coasts.get(j);
+                        summs.add(sum);
+                    } else {
+                        summs.add(0);
+                    }
+                }
+                int max = Collections.max(summs);
+                int indexOfMax = summs.indexOf(max);
+                String nameOfMax = monthData.get(i).items.get(indexOfMax);
+                isntExpencesNames.add(nameOfMax);
+                isntExpencesSums.add(max);
+                //System.out.println("Больше всего доходов по товару '" + nameOfMax + "' на сумму: " + max);
+            }
         }
 
         void topExpence(HashMap<Integer, MonthReportRead.MonthData> monthData) {
-            ArrayList<Integer> expences = new ArrayList<>();
             for (int i = 1; i <= monthData.size(); i++) {
+                ArrayList<Integer> summs = new ArrayList<>();
                 MonthReportRead.MonthData data = monthData.get(i);
-                if (data.expence) {
-                    int sum = data.quantity * data.coast;
-                    expences.add(sum);
-                } else {
-                    expences.add(0);
+                for (int j = 0; j < data.getSize(); j++) {
+                    if (data.expences.get(j)) {
+                        int sum = data.quantitys.get(j) * data.coasts.get(j);
+                        summs.add(sum);
+                    } else {
+                        summs.add(0);
+                    }
                 }
+                int max = Collections.max(summs);
+                int indexOfMax = summs.indexOf(max);
+                String nameOfMax = monthData.get(i).items.get(indexOfMax);
+                isExpencesNames.add(nameOfMax);
+                isExpencesSums.add(max);
+                //System.out.println("Больше всего расходов по товару '" + nameOfMax + "' на сумму: " + max);
             }
-            int max = Collections.max(expences);
-            int indexOfMax = expences.indexOf(max);
-            String nameOfMax = monthData.get(indexOfMax).item;
-            System.out.println("Больше всего расходов по товару '" + nameOfMax + "' на сумму: " + max);
         }
     }
 }
