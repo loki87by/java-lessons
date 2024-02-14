@@ -51,15 +51,19 @@ public class YearReportRead {
         ArrayList<Integer> amounts = new ArrayList<>();
         String monthName;
         int difference;
+        int debet;
+        int credit;
 
         public void setData(boolean exp1, boolean exp2, int sum1, int sum2) {
             expences.add(exp1);
             expences.add(exp2);
             amounts.add(sum1);
             amounts.add(sum2);
-            int notExpenceIndex = expences.indexOf(true);
-            int expenceIndex = expences.indexOf(false);
-            difference=amounts.get(expenceIndex)-amounts.get(notExpenceIndex);
+            int notExpenceIndex = expences.indexOf(false);
+            int expenceIndex = expences.indexOf(true);
+            debet = amounts.get(notExpenceIndex);
+            credit = amounts.get(expenceIndex);
+            difference=credit-debet;
         }
 
         public int getSize() {

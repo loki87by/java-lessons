@@ -26,24 +26,40 @@ public class Main {
                     yearInput = scanner.nextInt();
                 }
                 if (userInput == 1) {
-                System.out.println("Введите месяц с которого предоставлять отчёт");
-                monthInput = scanner.nextInt();
-                while (monthInput <= 0 || monthInput > 10) {
-                    System.out.println("Введите месяц с 1 по 10");
+                    System.out.println("Введите месяц с которого предоставлять отчёт");
                     monthInput = scanner.nextInt();
-                }
-                MonthReportRead monthReportRead = new MonthReportRead(path, yearInput, monthInput);
-                monthlyReport = new MonthlyReport();
-                monthlyReport.setData(monthReportRead.monthData);
-                monthlyReport.getData();
+                    while (monthInput <= 0 || monthInput > 10) {
+                        System.out.println("Введите месяц с 1 по 10");
+                        monthInput = scanner.nextInt();
+                    }
+                    MonthReportRead monthReportRead = new MonthReportRead(path, yearInput, monthInput);
+                    monthlyReport = new MonthlyReport();
+                    monthlyReport.setData(monthReportRead.monthData);
+                    monthlyReport.getData();
+                    yearInput = 0;
+                    monthInput = 0;
                 } else {
                     YearReportRead yearReportRead = new YearReportRead(path, yearInput);
                     yearlyReport = new YearlyReport();
                     yearlyReport.setData(yearReportRead.yearData, yearInput);
                     yearlyReport.getData();
+                    yearInput = 0;
+                    monthInput = 0;
                 }
-            }  else if (userInput == 3) {
-                System.out.println("Сверить отчёты");
+            } else if (userInput == 3) {
+                if (monthlyReport == null) {
+                    System.out.println("АЛЛЁ, ХЪЮСТОН! Сначала нужно считать все месячные отчёты!");
+                    //printMenu();
+                } else if (yearlyReport == null) {
+                    System.out.println("АЛЛЁ, ХЪЮСТОН! Сначала нужно считать годовой отчёт!");
+                    //printMenu();
+                } else {
+                    int cnt = 0;
+                    for (int month : yearlyReport.yearData.keySet()) {
+                        compareReports(yearlyReport.yearData.get(month).debet, monthlyReport.totalNotExpencesSums.get(cnt), yearlyReport.yearData.get(month).credit, monthlyReport.totalExpencesSums.get(cnt), month, yearlyReport.currentYear);
+                        cnt++;
+                    }
+                }
             } else if (userInput == 4) {
                 System.out.println("Вывести информацию о всех месячных отчётах");
             } else if (userInput == 5) {
@@ -67,20 +83,29 @@ public class Main {
         System.out.println("5 - Вывести информацию о годовом отчёте");
         System.out.println("0 - Выйти");
     }
+
     public static class YearlyReport {
         HashMap<Integer, YearReportRead.YearData> yearData = new HashMap<>();
+
         void setData(HashMap<Integer, YearReportRead.YearData> yd, int year) {
             yearData = yd;
-            currentYear=year;
+            currentYear = year;
         }
+
         int currentYear;
 
         void getData() {
-            System.out.println(currentYear);
-            for (int i=1; i<=yearData.size();i++){
-                System.out.println(yearData.get(i).difference);
-
+            System.out.print("В отчете за " + currentYear + " год в ");
+            for (int i = 1; i <= yearData.size(); i++) {
+                System.out.println(i + "-м месяце прибыль составила " + yearData.get(i).difference + ".");
+                if (i != yearData.size()) {
+                    System.out.print("В ");
+                }
             }
+        }
+
+        public int getYear() {
+            return currentYear;
         }
     }
 
@@ -90,11 +115,13 @@ public class Main {
         ArrayList<String> isntExpencesNames = new ArrayList<>();
         ArrayList<Integer> isntExpencesSums = new ArrayList<>();
         ArrayList<Integer> isExpencesSums = new ArrayList<>();
+        ArrayList<Integer> totalExpencesSums = new ArrayList<>();
+        ArrayList<Integer> totalNotExpencesSums = new ArrayList<>();
 
         void setData(HashMap<Integer, MonthReportRead.MonthData> md) {
             monthData = md;
-                topSale(md);
-                topExpence(md);
+            topSale(md);
+            topExpence(md);
         }
 
         void getData() {
@@ -102,8 +129,8 @@ public class Main {
                 for (int i = 1; i <= monthData.size(); i++) {
                     MonthReportRead.MonthData data = monthData.get(i);
                     if (data != null) {
-                        System.out.print("В " + data.monthName + " больше всего доходов по товару '" + isntExpencesNames.get(i-1) + "' на сумму: " + isntExpencesSums.get(i - 1));
-                        System.out.println(", а расходов по товару '" + isExpencesNames.get(i - 1) + "' на сумму: " + isExpencesSums.get(i-1));
+                        System.out.print("В " + data.monthName + " больше всего доходов по товару '" + isntExpencesNames.get(i - 1) + "' на сумму: " + isntExpencesSums.get(i - 1));
+                        System.out.println(", а расходов по товару '" + isExpencesNames.get(i - 1) + "' на сумму: " + isExpencesSums.get(i - 1));
                     }
                 }
             }
@@ -123,14 +150,16 @@ public class Main {
                         }
                     }
                     int max = Collections.max(summs);
+                    int totalSum = summs.stream().mapToInt(Integer::intValue).sum();
                     int indexOfMax = summs.indexOf(max);
                     String nameOfMax = monthData.get(i).items.get(indexOfMax);
                     isntExpencesNames.add(nameOfMax);
                     isntExpencesSums.add(max);
-                }
-                else {
+                    totalNotExpencesSums.add(totalSum);
+                } else {
                     isntExpencesNames.add(null);
                     isntExpencesSums.add(null);
+                    totalNotExpencesSums.add(null);
                 }
             }
         }
@@ -149,16 +178,33 @@ public class Main {
                         }
                     }
                     int max = Collections.max(summs);
+                    int totalSum = summs.stream().mapToInt(Integer::intValue).sum();
                     int indexOfMax = summs.indexOf(max);
                     String nameOfMax = monthData.get(i).items.get(indexOfMax);
                     isExpencesNames.add(nameOfMax);
                     isExpencesSums.add(max);
-                }
-                else {
+                    totalExpencesSums.add(totalSum);
+                } else {
                     isExpencesNames.add(null);
                     isExpencesSums.add(null);
+                    totalExpencesSums.add(null);
                 }
             }
         }
     }
+
+    public static void compareReports(int doyr, int domr, int coyr, int comr, int num, int year) {
+        if (doyr == domr && coyr == comr) {
+            System.out.println("За " + num + "-й месяц " + year + "-го года несоответствий не найдено.");
+        } else {
+            System.out.println("За " + num + "-й месяц " + year + "-го года обнаружены следующие несоответствия:");
+            if (doyr != domr) {
+                System.out.println("В годовом отчете указан доход " + doyr + ", а в месячном " + domr + ".");
+            }
+            if (coyr != comr) {
+                System.out.println("В годовом отчете указан расход " + coyr + ", а в месячном " + comr + ".");
+            }
+        }
+    }
 }
+
