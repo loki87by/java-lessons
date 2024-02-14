@@ -14,7 +14,7 @@ public class MonthReportRead {
             String curMonth = month == 10 ? "" + (month + i) : "0" + (month + i);
             String curPath = new File(path + "/m." + year + curMonth + ".csv").getAbsolutePath();
             String fileData = readFileContentOrNull(curPath);
-                setData(fileData, (month + i));
+            setData(fileData, (month + i));
         }
     }
 
@@ -64,7 +64,7 @@ public class MonthReportRead {
         }
 
         public void setName(int index) {
-            monthName = monthNames[index-1];
+            monthName = monthNames[index - 1];
         }
     }
 }

@@ -10,11 +10,9 @@ public class YearReportRead {
     static String[] monthNames = {"январе", "фaврале", "марте", "апреле", "мае", "июне", "июле", "августе", "сентябре", "октябре", "ноябре", "декабре"};
 
     public YearReportRead(String path, int year) {
-            String curPath = new File(path + "/y." + year + ".csv").getAbsolutePath();
-            String fileData = readFileContentOrNull(curPath);
-            if (fileData != null) {
-                setData(fileData);
-            }
+        String curPath = new File(path + "/y." + year + ".csv").getAbsolutePath();
+        String fileData = readFileContentOrNull(curPath);
+        setData(fileData);
     }
 
     private static String readFileContentOrNull(String path) {
@@ -27,22 +25,24 @@ public class YearReportRead {
     }
 
     private void setData(String file) {
-        String[] lines = file.split("\\n");
-        YearData month = null;
-        int monthIndex = 0;
-        for (int i = 1; i < lines.length; i+=2) {
-            month = new YearData();
-            String[] data1 = lines[i].split(",");
-            String[] data2 = lines[i+1].split(",");
-            int monthNumber = Integer.parseInt(data1[0].replace("0", ""));
-            monthIndex=monthNumber;
-            month.setName(monthNames[monthNumber-1]);
-            boolean is_expence1 = data1[2].equals("true");
-            boolean is_expence2 = data2[2].equals("true");
-            int amount1 = Integer.parseInt(data1[1]);
-            int amount2 = Integer.parseInt(data2[1]);
-            month.setData(is_expence1, is_expence2, amount1, amount2);
-            yearData.put(monthIndex, month);
+        if (file != null) {
+            String[] lines = file.split("\\n");
+            YearData month = null;
+            int monthIndex = 0;
+            for (int i = 1; i < lines.length; i += 2) {
+                month = new YearData();
+                String[] data1 = lines[i].split(",");
+                String[] data2 = lines[i + 1].split(",");
+                int monthNumber = Integer.parseInt(data1[0].replace("0", ""));
+                monthIndex = monthNumber;
+                month.setName(monthNames[monthNumber - 1]);
+                boolean is_expence1 = data1[2].equals("true");
+                boolean is_expence2 = data2[2].equals("true");
+                int amount1 = Integer.parseInt(data1[1]);
+                int amount2 = Integer.parseInt(data2[1]);
+                month.setData(is_expence1, is_expence2, amount1, amount2);
+                yearData.put(monthIndex, month);
+            }
         }
     }
 
@@ -63,11 +63,7 @@ public class YearReportRead {
             int expenceIndex = expences.indexOf(true);
             debet = amounts.get(notExpenceIndex);
             credit = amounts.get(expenceIndex);
-            difference=credit-debet;
-        }
-
-        public int getSize() {
-            return expences.size();
+            difference = credit - debet;
         }
 
         public void setName(String name) {

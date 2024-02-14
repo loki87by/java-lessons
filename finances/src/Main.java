@@ -35,35 +35,35 @@ public class Main {
                     MonthReportRead monthReportRead = new MonthReportRead(path, yearInput, monthInput);
                     monthlyReport = new MonthlyReport();
                     monthlyReport.setData(monthReportRead.monthData);
-                    monthlyReport.getData();
                     yearInput = 0;
                     monthInput = 0;
                 } else {
                     YearReportRead yearReportRead = new YearReportRead(path, yearInput);
-                    yearlyReport = new YearlyReport();
-                    yearlyReport.setData(yearReportRead.yearData, yearInput);
-                    yearlyReport.getData();
+                    if (!yearReportRead.yearData.isEmpty()) {
+                        yearlyReport = new YearlyReport();
+                        yearlyReport.setData(yearReportRead.yearData, yearInput);
+                    }
                     yearInput = 0;
                     monthInput = 0;
                 }
             } else if (userInput == 3) {
                 if (monthlyReport == null) {
                     System.out.println("АЛЛЁ, ХЪЮСТОН! Сначала нужно считать все месячные отчёты!");
-                    //printMenu();
                 } else if (yearlyReport == null) {
                     System.out.println("АЛЛЁ, ХЪЮСТОН! Сначала нужно считать годовой отчёт!");
-                    //printMenu();
                 } else {
                     int cnt = 0;
                     for (int month : yearlyReport.yearData.keySet()) {
-                        compareReports(yearlyReport.yearData.get(month).debet, monthlyReport.totalNotExpencesSums.get(cnt), yearlyReport.yearData.get(month).credit, monthlyReport.totalExpencesSums.get(cnt), month, yearlyReport.currentYear);
+                        if (monthlyReport.monthData.containsKey(month)) {
+                            compareReports(yearlyReport.yearData.get(month).debet, monthlyReport.totalNotExpencesSums.get(cnt), yearlyReport.yearData.get(month).credit, monthlyReport.totalExpencesSums.get(cnt), month, yearlyReport.currentYear);
+                        }
                         cnt++;
                     }
                 }
             } else if (userInput == 4) {
-                System.out.println("Вывести информацию о всех месячных отчётах");
+                monthlyReport.getData();
             } else if (userInput == 5) {
-                System.out.println("Вывести информацию о годовом отчёте");
+                yearlyReport.getData();
             } else {
                 System.out.println("Херню ввёл, попробуем еще раз");
             }
@@ -93,19 +93,22 @@ public class Main {
         }
 
         int currentYear;
+        int avgDebit = 0;
+        int avgCredit = 0;
 
         void getData() {
             System.out.print("В отчете за " + currentYear + " год в ");
             for (int i = 1; i <= yearData.size(); i++) {
                 System.out.println(i + "-м месяце прибыль составила " + yearData.get(i).difference + ".");
+                avgDebit += yearData.get(i).debet;
+                avgCredit += yearData.get(i).credit;
                 if (i != yearData.size()) {
                     System.out.print("В ");
+                    avgDebit /= 3;
+                    avgCredit /= 3;
                 }
             }
-        }
-
-        public int getYear() {
-            return currentYear;
+            System.out.println("Средний расход составил: " + avgCredit + ", а средний доход: " + avgDebit);
         }
     }
 
