@@ -8,13 +8,32 @@ public class Epic extends Task {
     String status;
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
     public String toString() {
-        return "Epic{" +
-                "content=" + content +
-                ", name='" + name + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                ", isEpic=" + isEpic +
+        return "Epic = {" +
+                " name='" + name + '\'' +
+                ", id=" + id +'\n' +
+                //", status='" + status + '\'' +
+                "content=" + content +'\n' +
                 '}';
     }
 
@@ -24,15 +43,22 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return id == epic.id && isEpic == epic.isEpic && Objects.equals(content, epic.content) && Objects.equals(name, epic.name) && Objects.equals(status, epic.status);
+        return id == epic.id && Objects.equals(content, epic.content) && Objects.equals(name, epic.name) && Objects.equals(status, epic.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), content, name, id, status, isEpic);
+        return Objects.hash(super.hashCode(), content, name, id, status);
     }
 
-    boolean isEpic = true;
+    public HashMap<Integer, Object> getContent() {
+        return content;
+    }
+
+    public void setContent(HashMap<Integer, Object> content) {
+        this.content = content;
+    }
+
 
     public Epic(String name, HashMap<Integer, Object> content, int id, String status) {
         super(name, id, status);
