@@ -10,6 +10,7 @@ public class Main {
         int dayInput;
         int stepsInput;
 
+
         while (userInput != 0) {
             if ((userInput == 1) || (userInput == 2)) {
                 System.out.println("Выбери месяц");
