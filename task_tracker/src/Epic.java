@@ -1,11 +1,19 @@
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Epic extends Task {
-    HashMap<Integer, Object> content;
+public class Epic extends Subtask {
+    HashMap<Integer, Task> content;
     String name;
     int id;
     String status;
+
+    public HashMap<Integer, Task> getContent() {
+        return content;
+    }
+
+    public void setContent(HashMap<Integer, Task> content) {
+        this.content = content;
+    }
 
     @Override
     public String getName() {
@@ -29,12 +37,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic = {" +
-                " name='" + name + '\'' +
-                ", id=" + id +'\n' +
-                //", status='" + status + '\'' +
-                "content=" + content +'\n' +
-                '}';
+        return "\u001B[38;5;44m" +
+                name + " (Epic-" +
+                id + ")" + "\u001B[0m" +
+                ", content=\n\t" +
+                content + "\n\t";
     }
 
     @Override
@@ -51,20 +58,11 @@ public class Epic extends Task {
         return Objects.hash(super.hashCode(), content, name, id, status);
     }
 
-    public HashMap<Integer, Object> getContent() {
-        return content;
-    }
-
-    public void setContent(HashMap<Integer, Object> content) {
-        this.content = content;
-    }
-
-
-    public Epic(String name, HashMap<Integer, Object> content, int id, String status) {
+    public Epic(String name, int id, String status) {
         super(name, id, status);
         this.name = name;
-        this.content = content;
         this.id = id;
         this.status = status;
+        this.content = new HashMap<>();
     }
 }
