@@ -60,12 +60,12 @@ public class Manager {
             if (index == id) {
                 if (tasks.get(index) instanceof Task t) {
                     t.content.put(st.id, st);
-                }
-            } else if (tasks.get(index) instanceof Epic e) {
-                for (int indx : e.content.keySet()) {
-                    if (indx == id) {
-                        if (e.content.get(indx) instanceof Task t) {
-                            t.content.put(st.id, st);
+                } else if (tasks.get(index) instanceof Epic e) {
+                    for (int indx : e.content.keySet()) {
+                        if (indx == id) {
+                            if (e.getContent().get(indx) instanceof Task t) {
+                                t.content.put(st.id, st);
+                            }
                         }
                     }
                 }

@@ -3,49 +3,160 @@ import java.util.Scanner;
 
 public class Main {
     static HashMap<Integer, Object> tasks = new HashMap<>();
+    static Scanner scanner = new Scanner(System.in);
+    static double userInput;
+    static double secondInput;
+    static String strParamInput;
+    static int idInput;
+    static Manager manager = new Manager();
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
         manager.init(tasks);
-        manager.setTask("bla", 0);
-        manager.setSubtask("bla bla", 1);
-        manager.setSubtask("bla bla bla", 1);
-        manager.setEpic("xyzEpic");
-        manager.setTask("xyz", 4);
-        manager.setSubtask("xyz xyz", 5);
-        manager.setSubtask("bla bla bla bla", 1);
-        manager.rename(1, "DONE");
-        //manager.getAllTasks();
-        manager.removeTask(5);
-        manager.getAllTasks();
+        manager.setTask("генеральная уборка", 0);
+        manager.setSubtask("пнуть робот-пылесос", 1);
+        manager.setSubtask("включить стиралку", 1);
+        manager.setEpic("выспаться");
+        manager.setTask("лечь в кровать", 4);
+        manager.setSubtask("отложить телефон", 5);
+        manager.setSubtask("отдохнуть после проделанной работы", 1);
+        manager.setSubtask("я сказал отложить телефон!", 5);
+        manager.setTask("закрыть глаза", 4);
+        manager.setSubtask("оба!", 9);
+        printMainMenu();
+        userInput = scanner.nextDouble();
+        while (userInput != 0) {
+            if (userInput >= 1 && userInput < 2) {
+                manager.getAllTasks();
+                printMainMenu();
+                userInput = scanner.nextDouble();
+            } else if (userInput >= 2 && userInput < 3) {
+                if (isInteger(userInput)) {
+                    printAddMenu();
+                } else {
+                    addMenu();
+                }
+            } else if (userInput >= 3 && userInput < 4) {
+                if (isInteger(userInput)) {
+                    printCorrectMenu();
+                } else {
+                    correctMenu();
+                }
+            } else if (userInput >= 4 && userInput < 5) {
+                if (isInteger(userInput)) {
+                    printDeleteMenu();
+                } else {
+                    deleteMenu();
+                }
+            }
+        }
+        System.out.println("Программа завершена");
     }
 
-    private void printMainMenu() {
+    private static boolean isInteger(double ui) {
+        return Math.ceil(ui) == ui;
+    }
+
+    private static void getNameAndIdFromInput(String additional) {
+        System.out.println("Введите название");
+        strParamInput = scanner.next();
+        System.out.println("введите id родительской задачи" + (!additional.isEmpty() ? additional : ""));
+        idInput = scanner.nextInt();
+    }
+
+    private static void getIdAndStatusFromInput(String additional) {
+        System.out.println("введите id");
+        idInput = scanner.nextInt();
+        System.out.println("Введите " + additional);
+        strParamInput = scanner.next();
+    }
+
+    private static void getNameFromInput() {
+        System.out.println("Введите название эпика");
+        strParamInput = scanner.next();
+    }
+
+    private static void getIdFromInput() {
+        System.out.println("введите id");
+        idInput = scanner.nextInt();
+    }
+
+    private static void printMainMenu() {
         System.out.println("Чё те надо?");
-        System.out.println("1 - показать трекер"); //manager.getAllTasks();
-        System.out.println("2 - добавить"); //printAddMenu();
-        System.out.println("3 - корректировать"); //printCorrectMenu()
-        System.out.println("4 - удалить"); //printDeleteMenu()
+        System.out.println("1 - показать трекер");
+        System.out.println("2 - добавить");
+        System.out.println("3 - корректировать");
+        System.out.println("4 - удалить");
         System.out.println("0 - выйти");
     }
 
-    private void printAddMenu() {
+    private static void addMenu() {
+        if (userInput == 2.1 || (Math.ceil(userInput) == 2 && secondInput == 1)) {
+            getNameAndIdFromInput("");
+            manager.setSubtask(strParamInput, idInput);
+        } else if (userInput == 2.2 || (Math.ceil(userInput) == 2 && secondInput == 2)) {
+            getNameAndIdFromInput(" или 0 для новой задачи");
+            manager.setTask(strParamInput, idInput);
+        } else if (userInput == 2.3 || (Math.ceil(userInput) == 2 && secondInput == 3)) {
+            getNameFromInput();
+            manager.setEpic(strParamInput);
+        } else {
+            System.out.println("что-то введено не корректно");
+        }
+        printMainMenu();
+        userInput = scanner.nextDouble();
+    }
+
+    private static void printAddMenu() {
         System.out.println("Что плюсуем?");
-        System.out.println("1 - Подзадачу"); //manager.setSubtask(name, id);
-        System.out.println("2 - Задачу"); //manager.setTask(name, id||0);
-        System.out.println("3 - Эпик"); //manager.setEpic(name);
+        System.out.println("1 - Подзадачу");
+        System.out.println("2 - Задачу");
+        System.out.println("3 - Эпик");
+        secondInput = scanner.nextDouble();
+        addMenu();
     }
 
-    private void printCorrectMenu() {
+
+    private static void correctMenu() {
+        if (userInput == 3.1 || (Math.ceil(userInput) == 3 && secondInput == 1)) {
+            getIdAndStatusFromInput("новый статус");
+            manager.changeStatus(idInput, strParamInput);
+        } else if (userInput == 3.2 || (Math.ceil(userInput) == 3 && secondInput == 2)) {
+            getIdAndStatusFromInput("новое имя");
+            manager.rename(idInput, strParamInput);
+        } else {
+            System.out.println("что-то введено не корректно");
+        }
+        printMainMenu();
+        userInput = scanner.nextDouble();
+    }
+
+    private static void printCorrectMenu() {
         System.out.println("Что правим?");
-        System.out.println("1 - Статус"); //manager.changeStatus(id, new_status);
-        System.out.println("2 - Заголовок"); //manager.rename(id, new_name);
+        System.out.println("1 - Статус");
+        System.out.println("2 - Заголовок");
+        secondInput = scanner.nextDouble();
+        correctMenu();
     }
 
-    private void printDeleteMenu() {
+    private static void deleteMenu() {
+        if (userInput == 4.1 || (Math.ceil(userInput) == 4 && secondInput == 1)) {
+            getIdFromInput();
+            manager.removeTask(idInput);
+        } else if (userInput == 4.2 || (Math.ceil(userInput) == 4 && secondInput == 2)) {
+            manager.deleteAllTasks();
+        } else {
+            System.out.println("что-то введено не корректно");
+        }
+        printMainMenu();
+        userInput = scanner.nextDouble();
+    }
+
+    private static void printDeleteMenu() {
         System.out.println("Что удаляем?");
-        System.out.println("1 - Запись"); //manager.removeTask(id);
-        System.out.println("2 - Всё"); //manager.deleteAllTasks();
+        System.out.println("1 - Запись");
+        System.out.println("2 - Всё");
+        secondInput = scanner.nextDouble();
+        deleteMenu();
     }
 
 }
