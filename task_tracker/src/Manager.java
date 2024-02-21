@@ -2,107 +2,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
-
     static HashMap<Integer, Object> tasks;
 
-    public void init(HashMap<Integer, Object> tasks) {
-        Manager.tasks = tasks;
-    }
-
-    private int getNextIndex() {
-        int count = 0;
-        if (!tasks.isEmpty()) {
-            int index = 0;
-            for (Object task : tasks.values()) {
-                if (task instanceof Subtask s) {
-                    int currentId = s.getId();
-                    index = Math.max(index, currentId);
-                    if (s instanceof Task t) {
-                        if (t.content != null) {
-                            for (Subtask sub : t.content.values()) {
-                                int ind = sub.getId();
-                                index = Math.max(index, ind);
-                            }
-                        }
-                    } else if (s instanceof Epic e) {
-                        if (e.content != null) {
-                            for (Task t : e.content.values()) {
-                                int ind = t.getId();
-                                index = Math.max(index, ind);
-                                if (t instanceof Task tt) {
-                                    if (tt.content != null) {
-                                        for (Subtask sub : tt.content.values()) {
-                                            int indx = sub.getId();
-                                            index = Math.max(index, indx);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            count = index;
-        }
-        count++;
-        return count;
-    }
-
-    private Subtask createSubtask(String name) {
-        int count = getNextIndex();
-        String status = "new";
-        return new Subtask(name, count, status);
-    }
-
-    public void setSubtask(String data, int id) {
-        Subtask st = createSubtask(data);
-        for (int index : tasks.keySet()) {
-            if (index == id) {
-                if (tasks.get(index) instanceof Task t) {
-                    t.content.put(st.id, st);
-                } else if (tasks.get(index) instanceof Epic e) {
-                    for (int indx : e.content.keySet()) {
-                        if (indx == id) {
-                            if (e.getContent().get(indx) instanceof Task t) {
-                                t.content.put(st.id, st);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private Task createTask(String name) {
-        int count = getNextIndex();
-        String status = "new";
-        return new Task(name, count, status);
-    }
-
-    public void setTask(String name, int id) {
-        Task task = createTask(name);
-        if (id > 0) {
-            for (int index : tasks.keySet()) {
-                if (index == id && tasks.get(index) instanceof Epic e) {
-                    e.content.put(task.id, task);
-                }
-            }
-        } else {
-            tasks.put(task.id, task);
-        }
-    }
-
-    private Epic createEpic(String name) {
-        int count = getNextIndex();
-        String status = "new";
-        return new Epic(name, count, status);
-    }
-
-    public void setEpic(String name) {
-        Epic epic = createEpic(name);
-        tasks.put(epic.id, epic);
-    }
-
+    //user interface
     public void getAllTasks() {
         HashMap<Integer, Object> newTasks = new HashMap<>();
         HashMap<Integer, Object> doingTasks = new HashMap<>();
@@ -152,6 +54,65 @@ public class Manager {
         System.out.println("\u001b[36m----------------------------------------------------------------------\u001B[0m");
     }
 
+    //new entity creators
+    private Subtask createSubtask(String name) {
+        int count = getNextIndex();
+        String status = "new";
+        return new Subtask(name, count, status);
+    }
+
+    private Task createTask(String name) {
+        int count = getNextIndex();
+        String status = "new";
+        return new Task(name, count, status);
+    }
+
+    private Epic createEpic(String name) {
+        int count = getNextIndex();
+        String status = "new";
+        return new Epic(name, count, status);
+    }
+
+    //data getters
+    private int getNextIndex() {
+        int count = 0;
+        if (!tasks.isEmpty()) {
+            int index = 0;
+            for (Object task : tasks.values()) {
+                if (task instanceof Subtask s) {
+                    int currentId = s.getId();
+                    index = Math.max(index, currentId);
+                    if (s instanceof Task t) {
+                        if (t.content != null) {
+                            for (Subtask sub : t.content.values()) {
+                                int ind = sub.getId();
+                                index = Math.max(index, ind);
+                            }
+                        }
+                    } else if (s instanceof Epic e) {
+                        if (e.content != null) {
+                            for (Task t : e.content.values()) {
+                                int ind = t.getId();
+                                index = Math.max(index, ind);
+                                if (t instanceof Task tt) {
+                                    if (tt.content != null) {
+                                        for (Subtask sub : tt.content.values()) {
+                                            int indx = sub.getId();
+                                            index = Math.max(index, indx);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            count = index;
+        }
+        count++;
+        return count;
+    }
+
     private Object getById(int id) {
         if (tasks.containsKey(id)) {
             return tasks.get(id);
@@ -186,6 +147,49 @@ public class Manager {
         }
     }
 
+    //entity setters
+    public void init(HashMap<Integer, Object> tasks) {
+        Manager.tasks = tasks;
+    }
+
+    public void setEpic(String name) {
+        Epic epic = createEpic(name);
+        tasks.put(epic.id, epic);
+    }
+
+    public void setTask(String name, int id) {
+        Task task = createTask(name);
+        if (id > 0) {
+            for (int index : tasks.keySet()) {
+                if (index == id && tasks.get(index) instanceof Epic e) {
+                    e.content.put(task.id, task);
+                }
+            }
+        } else {
+            tasks.put(task.id, task);
+        }
+    }
+
+    public void setSubtask(String data, int id) {
+        Subtask st = createSubtask(data);
+        for (int index : tasks.keySet()) {
+            if (index == id) {
+                if (tasks.get(index) instanceof Task t) {
+                    t.content.put(st.id, st);
+                } else if (tasks.get(index) instanceof Epic e) {
+                    for (int indx : e.content.keySet()) {
+                        if (indx == id) {
+                            if (e.getContent().get(indx) instanceof Task t) {
+                                t.content.put(st.id, st);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //checkers
     private void checkEpicState() {
         for (int id : tasks.keySet()) {
             Object task = tasks.get(id);
@@ -218,6 +222,7 @@ public class Manager {
         }
     }
 
+    //change options
     public void changeStatus(int id, String status) {
         Object task = getById(id);
         if (task instanceof Subtask s) {
@@ -239,6 +244,7 @@ public class Manager {
         }
     }
 
+    //remove options:
     public void deleteAllTasks() {
         tasks.clear();
     }

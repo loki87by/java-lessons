@@ -7,16 +7,18 @@ public class Task extends Subtask {
     String status;
     HashMap<Integer, Subtask> content;
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
+    //setters
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    //getters
     @Override
     public int getId() {
         return id;
@@ -27,19 +29,11 @@ public class Task extends Subtask {
         return status;
     }
 
-    @Override
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public HashMap<Integer, Subtask> getContent() {
         return content;
     }
 
-    public void setContent(HashMap<Integer, Subtask> content) {
-        this.content = content;
-    }
-
+    //restructure
     @Override
     public String toString() {
         return "\t\u001B[38;5;33m" +
@@ -58,14 +52,16 @@ public class Task extends Subtask {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(status, task.status) && Objects.equals(content, task.content);
+        return id == task.id &&
+                Objects.equals(name, task.name)
+                && Objects.equals(status, task.status)
+                && Objects.equals(content, task.content);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, id, status, content);
     }
-
 
     public Task(String name, int id, String status) {
         super(name, id, status);
@@ -75,4 +71,3 @@ public class Task extends Subtask {
         this.content = new HashMap<>();
     }
 }
-

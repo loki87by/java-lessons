@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Subtask {
@@ -6,14 +5,16 @@ public class Subtask {
     int id;
     String status;
 
-    public String getName() {
-        return name;
-    }
-
+    //setters
     public void setName(String name) {
         this.name = name;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    //getters
     public int getId() {
         return id;
     }
@@ -22,10 +23,7 @@ public class Subtask {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
+    //restructure
     @Override
     public String toString() {
         return "\u001B[38;5;28m" +

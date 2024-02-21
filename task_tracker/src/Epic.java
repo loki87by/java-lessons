@@ -11,23 +11,10 @@ public class Epic extends Subtask {
         return content;
     }
 
-    public void setContent(HashMap<Integer, Task> content) {
-        this.content = content;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
+    //setters
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getStatus() {
-        return status;
     }
 
     @Override
@@ -35,6 +22,13 @@ public class Epic extends Subtask {
         this.status = status;
     }
 
+    //getters
+    @Override
+    public String getStatus() {
+        return status;
+    }
+
+    //restructure
     @Override
     public String toString() {
         return "\u001B[38;5;44m" +
@@ -49,7 +43,10 @@ public class Epic extends Subtask {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return id == epic.id && Objects.equals(content, epic.content) && Objects.equals(name, epic.name) && Objects.equals(status, epic.status);
+        return id == epic.id &&
+                Objects.equals(content, epic.content) &&
+                Objects.equals(name, epic.name) &&
+                Objects.equals(status, epic.status);
     }
 
     @Override

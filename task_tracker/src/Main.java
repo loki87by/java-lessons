@@ -12,16 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         manager.init(tasks);
-        manager.setTask("генеральная уборка", 0);
-        manager.setSubtask("пнуть робот-пылесос", 1);
-        manager.setSubtask("включить стиралку", 1);
-        manager.setEpic("выспаться");
-        manager.setTask("лечь в кровать", 4);
-        manager.setSubtask("отложить телефон", 5);
-        manager.setSubtask("отдохнуть после проделанной работы", 1);
-        manager.setSubtask("я сказал отложить телефон!", 5);
-        manager.setTask("закрыть глаза", 4);
-        manager.setSubtask("оба!", 9);
+        setBasicTasks();
         printMainMenu();
         userInput = scanner.nextDouble();
         while (userInput != 0) {
@@ -52,10 +43,27 @@ public class Main {
         System.out.println("Программа завершена");
     }
 
+    //default operations:
+    private static void setBasicTasks() {
+        manager.setTask("генеральная уборка", 0);
+        manager.setSubtask("пнуть робот-пылесос", 1);
+        manager.setSubtask("включить стиралку", 1);
+        manager.setEpic("выспаться");
+        manager.setTask("лечь в кровать", 4);
+        manager.setSubtask("отложить телефон", 5);
+        manager.setSubtask("отдохнуть после проделанной работы", 1);
+        manager.setSubtask("я сказал отложить телефон!", 5);
+        manager.setTask("закрыть глаза", 4);
+        manager.setSubtask("оба!", 9);
+    }
+
+    //checkers functions:
     private static boolean isInteger(double ui) {
         return Math.ceil(ui) == ui;
     }
 
+    //userInput handlers:
+    // *save variables from inputs
     private static void getNameAndIdFromInput(String additional) {
         System.out.println("Введите название");
         strParamInput = scanner.next();
@@ -80,6 +88,7 @@ public class Main {
         idInput = scanner.nextInt();
     }
 
+    // *print menu from inputs
     private static void printMainMenu() {
         System.out.println("Чё те надо?");
         System.out.println("1 - показать трекер");
@@ -89,6 +98,32 @@ public class Main {
         System.out.println("0 - выйти");
     }
 
+    private static void printAddMenu() {
+        System.out.println("Что плюсуем?");
+        System.out.println("1 - Подзадачу");
+        System.out.println("2 - Задачу");
+        System.out.println("3 - Эпик");
+        secondInput = scanner.nextDouble();
+        addMenu();
+    }
+
+    private static void printCorrectMenu() {
+        System.out.println("Что правим?");
+        System.out.println("1 - Статус");
+        System.out.println("2 - Заголовок");
+        secondInput = scanner.nextDouble();
+        correctMenu();
+    }
+
+    private static void printDeleteMenu() {
+        System.out.println("Что удаляем?");
+        System.out.println("1 - Запись");
+        System.out.println("2 - Всё");
+        secondInput = scanner.nextDouble();
+        deleteMenu();
+    }
+
+    //submenu:
     private static void addMenu() {
         if (userInput == 2.1 || (Math.ceil(userInput) == 2 && secondInput == 1)) {
             getNameAndIdFromInput("");
@@ -106,16 +141,6 @@ public class Main {
         userInput = scanner.nextDouble();
     }
 
-    private static void printAddMenu() {
-        System.out.println("Что плюсуем?");
-        System.out.println("1 - Подзадачу");
-        System.out.println("2 - Задачу");
-        System.out.println("3 - Эпик");
-        secondInput = scanner.nextDouble();
-        addMenu();
-    }
-
-
     private static void correctMenu() {
         if (userInput == 3.1 || (Math.ceil(userInput) == 3 && secondInput == 1)) {
             getIdAndStatusFromInput("новый статус");
@@ -130,14 +155,6 @@ public class Main {
         userInput = scanner.nextDouble();
     }
 
-    private static void printCorrectMenu() {
-        System.out.println("Что правим?");
-        System.out.println("1 - Статус");
-        System.out.println("2 - Заголовок");
-        secondInput = scanner.nextDouble();
-        correctMenu();
-    }
-
     private static void deleteMenu() {
         if (userInput == 4.1 || (Math.ceil(userInput) == 4 && secondInput == 1)) {
             getIdFromInput();
@@ -150,13 +167,4 @@ public class Main {
         printMainMenu();
         userInput = scanner.nextDouble();
     }
-
-    private static void printDeleteMenu() {
-        System.out.println("Что удаляем?");
-        System.out.println("1 - Запись");
-        System.out.println("2 - Всё");
-        secondInput = scanner.nextDouble();
-        deleteMenu();
-    }
-
 }
