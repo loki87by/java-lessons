@@ -45,7 +45,9 @@ public class Task extends Subtask {
         return "\t\u001B[38;5;33m" +
                 name + " (Task-" +
                 id + ")" + "\u001B[0m" + ", status='" +
-                (status.equals("new") ? "\u001b[31m" : status.equals("done") ? "\u001b[32m" : "\u001b[33m") +
+                (status.equals("new") ? "\u001b[31m" :
+                        status.equals("done") ?
+                                "\u001b[32m" : "\u001b[33m") +
                 status + "\u001B[0m" + '\'' + ", content=\n\t\t" +
                 content + "\n\t";
     }

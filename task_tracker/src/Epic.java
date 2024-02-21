@@ -39,8 +39,7 @@ public class Epic extends Subtask {
     public String toString() {
         return "\u001B[38;5;44m" +
                 name + " (Epic-" +
-                id + ")" + "\u001B[0m" +
-                ", content=\n\t" +
+                id + ")" + "\u001B[0m" + ", content=\n\t" +
                 content + "\n\t";
     }
 

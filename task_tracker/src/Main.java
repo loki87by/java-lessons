@@ -3,7 +3,6 @@ import java.util.Scanner;
 
 public class Main {
     static HashMap<Integer, Object> tasks = new HashMap<>();
-    static Scanner scanner = new Scanner();
 
     public static void main(String[] args) {
         Manager manager = new Manager();

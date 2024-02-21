@@ -31,7 +31,9 @@ public class Subtask {
         return "\u001B[38;5;28m" +
                 name + " (Subtask-" +
                 id + ")\u001B[0m" + ", status='" +
-                (status.equals("new") ? "\u001b[31m" : status.equals("done") ? "\u001b[32m" : "\u001b[33m") +
+                (status.equals("new") ? "\u001b[31m" :
+                        status.equals("done") ?
+                                "\u001b[32m" : "\u001b[33m") +
                 status + "\u001B[0m" + '\'' + "\n\t\t";
     }
 
