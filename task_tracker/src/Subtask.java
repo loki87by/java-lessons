@@ -3,14 +3,14 @@ import java.util.Objects;
 public class Subtask {
     String name;
     int id;
-    String status;
+    Status status;
 
     //setters
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -19,7 +19,7 @@ public class Subtask {
         return id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -29,8 +29,8 @@ public class Subtask {
         return "\u001B[38;5;28m" +
                 name + " (Subtask-" +
                 id + ")\u001B[0m" + ", status='" +
-                (status.equals("new") ? "\u001b[31m" :
-                        status.equals("done") ?
+                (status==Status.NEW ? "\u001b[31m" :
+                        status==Status.DONE ?
                                 "\u001b[32m" : "\u001b[33m") +
                 status + "\u001B[0m" + '\'' + "\n\t\t";
     }
@@ -48,7 +48,7 @@ public class Subtask {
         return Objects.hash(name, id, status);
     }
 
-    public Subtask(String name, int id, String status) {
+    public Subtask(String name, int id, Status status) {
         this.name = name;
         this.id = id;
         this.status = status;

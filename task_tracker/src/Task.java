@@ -4,7 +4,7 @@ import java.util.Objects;
 public class Task extends Subtask {
     String name;
     int id;
-    String status;
+    Status status;
     HashMap<Integer, Subtask> content;
 
     //setters
@@ -14,7 +14,7 @@ public class Task extends Subtask {
     }
 
     @Override
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -25,7 +25,7 @@ public class Task extends Subtask {
     }
 
     @Override
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -39,8 +39,8 @@ public class Task extends Subtask {
         return "\t\u001B[38;5;33m" +
                 name + " (Task-" +
                 id + ")" + "\u001B[0m" + ", status='" +
-                (status.equals("new") ? "\u001b[31m" :
-                        status.equals("done") ?
+                (status==Status.NEW ? "\u001b[31m" :
+                        status==Status.DONE ?
                                 "\u001b[32m" : "\u001b[33m") +
                 status + "\u001B[0m" + '\'' + ", content=\n\t\t" +
                 content + "\n\t";
@@ -63,7 +63,7 @@ public class Task extends Subtask {
         return Objects.hash(super.hashCode(), name, id, status, content);
     }
 
-    public Task(String name, int id, String status) {
+    public Task(String name, int id, Status status) {
         super(name, id, status);
         this.name = name;
         this.id = id;

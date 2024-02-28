@@ -5,9 +5,10 @@ public class Epic extends Subtask {
     HashMap<Integer, Task> content;
     String name;
     int id;
-    String status;
+    Status status;
 
     public HashMap<Integer, Task> getContent() {
+
         return content;
     }
 
@@ -18,15 +19,16 @@ public class Epic extends Subtask {
     }
 
     @Override
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     //getters
     @Override
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
+
 
     //restructure
     @Override
@@ -54,7 +56,7 @@ public class Epic extends Subtask {
         return Objects.hash(super.hashCode(), content, name, id, status);
     }
 
-    public Epic(String name, int id, String status) {
+    public Epic(String name, int id, Status status) {
         super(name, id, status);
         this.name = name;
         this.id = id;

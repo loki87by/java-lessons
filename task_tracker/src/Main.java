@@ -8,16 +8,17 @@ public class Main {
     static double secondInput;
     static String strParamInput;
     static int idInput;
-    static Manager manager = new Manager();
+    static TaskManager inMemoryTaskManager = Managers.getDefault();
+    static HistoryManager historyManager = Managers.getDefaultHistory();
 
     public static void main(String[] args) {
-        manager.init(tasks);
+        inMemoryTaskManager.init(tasks);
         setBasicTasks();
         printMainMenu();
         userInput = scanner.nextDouble();
         while (userInput != 0) {
             if (userInput >= 1 && userInput < 2) {
-                manager.getAllTasks();
+                inMemoryTaskManager.getAllTasks();
                 printMainMenu();
                 userInput = scanner.nextDouble();
             } else if (userInput >= 2 && userInput < 3) {
@@ -38,6 +39,14 @@ public class Main {
                 } else {
                     deleteMenu();
                 }
+            } else if (userInput == 5) {
+                inMemoryTaskManager.history();
+                printMainMenu();
+                userInput = scanner.nextDouble();
+            } else if (userInput == 6) {
+                showNewHistory();
+                printMainMenu();
+                userInput = scanner.nextDouble();
             }
         }
         System.out.println("Программа завершена");
@@ -45,16 +54,22 @@ public class Main {
 
     //default operations:
     private static void setBasicTasks() {
-        manager.setTask("генеральная уборка", 0);
-        manager.setSubtask("пнуть робот-пылесос", 1);
-        manager.setSubtask("включить стиралку", 1);
-        manager.setEpic("выспаться");
-        manager.setTask("лечь в кровать", 4);
-        manager.setSubtask("отложить телефон", 5);
-        manager.setSubtask("отдохнуть после проделанной работы", 1);
-        manager.setSubtask("я сказал отложить телефон!", 5);
-        manager.setTask("закрыть глаза", 4);
-        manager.setSubtask("оба!", 9);
+        inMemoryTaskManager.setTask("генеральная уборка", 0);
+        inMemoryTaskManager.setSubtask("пнуть робот-пылесос", 1);
+        inMemoryTaskManager.setSubtask("включить стиралку", 1);
+        inMemoryTaskManager.setEpic("выспаться");
+        inMemoryTaskManager.setTask("лечь в кровать", 4);
+        inMemoryTaskManager.setSubtask("отложить телефон", 5);
+        inMemoryTaskManager.setSubtask("отдохнуть после проделанной работы", 1);
+        inMemoryTaskManager.setSubtask("я сказал отложить телефон!", 5);
+        inMemoryTaskManager.setTask("закрыть глаза", 4);
+        inMemoryTaskManager.setSubtask("оба!", 9);
+    }
+    private static void showNewHistory() {
+        HashMap<Integer, Subtask> history = historyManager.getHistory();
+        for (int key : history.keySet()) {
+            System.out.println((history.size()-key)+". "+history.get(key));
+        }
     }
 
     //checkers functions:
@@ -95,6 +110,8 @@ public class Main {
         System.out.println("2 - добавить");
         System.out.println("3 - корректировать");
         System.out.println("4 - удалить");
+        System.out.println("5 - история");
+        System.out.println("6 - история new");
         System.out.println("0 - выйти");
     }
 
@@ -127,13 +144,13 @@ public class Main {
     private static void addMenu() {
         if (userInput == 2.1 || (Math.ceil(userInput) == 2 && secondInput == 1)) {
             getNameAndIdFromInput("");
-            manager.setSubtask(strParamInput, idInput);
+            inMemoryTaskManager.setSubtask(strParamInput, idInput);
         } else if (userInput == 2.2 || (Math.ceil(userInput) == 2 && secondInput == 2)) {
             getNameAndIdFromInput(" или 0 для новой задачи");
-            manager.setTask(strParamInput, idInput);
+            inMemoryTaskManager.setTask(strParamInput, idInput);
         } else if (userInput == 2.3 || (Math.ceil(userInput) == 2 && secondInput == 3)) {
             getNameFromInput();
-            manager.setEpic(strParamInput);
+            inMemoryTaskManager.setEpic(strParamInput);
         } else {
             System.out.println("что-то введено не корректно");
         }
@@ -144,10 +161,10 @@ public class Main {
     private static void correctMenu() {
         if (userInput == 3.1 || (Math.ceil(userInput) == 3 && secondInput == 1)) {
             getIdAndStatusFromInput("новый статус");
-            manager.changeStatus(idInput, strParamInput);
+            inMemoryTaskManager.changeStatus(idInput, strParamInput);
         } else if (userInput == 3.2 || (Math.ceil(userInput) == 3 && secondInput == 2)) {
             getIdAndStatusFromInput("новое имя");
-            manager.rename(idInput, strParamInput);
+            inMemoryTaskManager.rename(idInput, strParamInput);
         } else {
             System.out.println("что-то введено не корректно");
         }
@@ -158,9 +175,9 @@ public class Main {
     private static void deleteMenu() {
         if (userInput == 4.1 || (Math.ceil(userInput) == 4 && secondInput == 1)) {
             getIdFromInput();
-            manager.removeTask(idInput);
+            inMemoryTaskManager.removeTask(idInput);
         } else if (userInput == 4.2 || (Math.ceil(userInput) == 4 && secondInput == 2)) {
-            manager.deleteAllTasks();
+            inMemoryTaskManager.deleteAllTasks();
         } else {
             System.out.println("что-то введено не корректно");
         }

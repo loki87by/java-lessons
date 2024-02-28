@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     static HashMap<Integer, Object> tasks;
+    static Subtask[] story;
+    static HistoryManager historyManager = Managers.getDefaultHistory();
 
     //user interface
+    @Override
     public void getAllTasks() {
         HashMap<Integer, Object> newTasks = new HashMap<>();
         HashMap<Integer, Object> doingTasks = new HashMap<>();
@@ -12,10 +15,10 @@ public class Manager {
 
         for (Object task : tasks.values()) {
             if (task instanceof Subtask t) {
-                String status = t.getStatus().toLowerCase();
-                if (status.equals("new")) {
+                Status status = t.getStatus();
+                if (status==Status.NEW) {
                     newTasks.put(t.id, task);
-                } else if (status.equals("done")) {
+                } else if (status==Status.DONE) {
                     finishedTasks.put(t.id, task);
                 } else {
                     doingTasks.put(t.id, task);
@@ -54,22 +57,31 @@ public class Manager {
         System.out.println("\u001b[36m----------------------------------------------------------------------\u001B[0m");
     }
 
+    @Override
+    public void history() {
+        for (int i = 0; i < story.length; i++) {
+            if (story[i] != null) {
+                System.out.println((story.length - i) + ". " + story[i].toString());
+            }
+        }
+    }
+
     //new entity creators
     private Subtask createSubtask(String name) {
         int count = getNextIndex();
-        String status = "new";
+        Status status = Status.NEW;
         return new Subtask(name, count, status);
     }
 
     private Task createTask(String name) {
         int count = getNextIndex();
-        String status = "new";
+        Status status = Status.NEW;
         return new Task(name, count, status);
     }
 
     private Epic createEpic(String name) {
         int count = getNextIndex();
-        String status = "new";
+        Status status = Status.NEW;
         return new Epic(name, count, status);
     }
 
@@ -113,21 +125,41 @@ public class Manager {
         return count;
     }
 
+    private void addHistory(Subtask t) {
+        for (int i = 0; i < story.length - 1; i++) {
+            story[i] = story[i + 1];
+        }
+        story[story.length - 1] = t;
+    }
+
     private Object getById(int id) {
         if (tasks.containsKey(id)) {
+            if (tasks.get(id) instanceof Task) {
+                addHistory((Task) tasks.get(id));
+                historyManager.add((Task) tasks.get(id));
+            } else if (tasks.get(id) instanceof Epic) {
+                addHistory((Epic) tasks.get(id));
+                historyManager.add((Epic) tasks.get(id));
+            }
             return tasks.get(id);
         } else {
             for (int taskId : tasks.keySet()) {
                 if (tasks.get(taskId) instanceof Task t) {
                     if (t.content.containsKey(id)) {
+                        addHistory(t.content.get(id));
+                        historyManager.add(t.content.get(id));
                         return t.content.get(id);
                     }
                 } else if (tasks.get(taskId) instanceof Epic e) {
                     if (e.content.containsKey(id)) {
+                        addHistory(e.content.get(id));
+                        historyManager.add(e.content.get(id));
                         return e.content.get(id);
                     } else {
                         if (tasks.get(taskId) instanceof Task t) {
                             if (t.content.containsKey(id)) {
+                                addHistory(t.content.get(id));
+                                historyManager.add(t.content.get(id));
                                 return t.content.get(id);
                             }
                         }
@@ -138,25 +170,31 @@ public class Manager {
         return null;
     }
 
-    private String getStatus(String status) {
+    private Status getStatus(String status) {
         String lower = status.toLowerCase();
-        if (lower.equals("new") || lower.equals("done")) {
-            return lower;
+        if (lower.equals("new")) {
+            return Status.NEW;
+        } else if (lower.equals("done")) {
+            return Status.DONE;
         } else {
-            return "in_progress";
+            return Status.IN_PROGRESS;
         }
     }
 
     //entity setters
+    @Override
     public void init(HashMap<Integer, Object> tasks) {
-        Manager.tasks = tasks;
+        InMemoryTaskManager.tasks = tasks;
+        story = new Subtask[10];
     }
 
+    @Override
     public void setEpic(String name) {
         Epic epic = createEpic(name);
         tasks.put(epic.id, epic);
     }
 
+    @Override
     public void setTask(String name, int id) {
         Task task = createTask(name);
         if (id > 0) {
@@ -170,6 +208,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void setSubtask(String data, int id) {
         Subtask st = createSubtask(data);
         for (int index : tasks.keySet()) {
@@ -196,26 +235,26 @@ public class Manager {
             if (task instanceof Epic e) {
                 boolean isNew = false;
                 boolean isDone = false;
-                String status = "in_progress";
+                Status status = Status.IN_PROGRESS;
                 if (e.getContent().isEmpty()) {
                     isNew = true;
                 } else {
-                    ArrayList<String> statuses = new ArrayList<>();
+                    ArrayList<Status> statuses = new ArrayList<>();
                     for (int key : e.getContent().keySet()) {
                         if (e.getContent().get(key) instanceof Task t) {
                             statuses.add(t.getStatus());
                         }
                     }
-                    if (statuses.stream().allMatch(s -> s.equals("new"))) {
+                    if (statuses.stream().allMatch(s -> s == Status.NEW)) {
                         isNew = true;
-                    } else if (statuses.stream().allMatch(s -> s.equals("done"))) {
+                    } else if (statuses.stream().allMatch(s -> s == Status.DONE)) {
                         isDone = true;
                     }
                 }
                 if (isNew) {
-                    status = "new";
+                    status = Status.NEW;
                 } else if (isDone) {
-                    status = "done";
+                    status = Status.DONE;
                 }
                 e.setStatus(status);
             }
@@ -223,6 +262,7 @@ public class Manager {
     }
 
     //change options
+    @Override
     public void changeStatus(int id, String status) {
         Object task = getById(id);
         if (task instanceof Subtask s) {
@@ -237,6 +277,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void rename(int id, String new_name) {
         Object task = getById(id);
         if (task instanceof Subtask s) {
@@ -245,10 +286,12 @@ public class Manager {
     }
 
     //remove options:
+    @Override
     public void deleteAllTasks() {
         tasks.clear();
     }
 
+    @Override
     public void removeTask(int id) {
         if (!tasks.containsKey(id)) {
             for (int key : tasks.keySet()) {
