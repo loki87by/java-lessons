@@ -59,10 +59,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void history() {
-        for (int i = 0; i < story.length; i++) {
+        /*for (int i = 0; i < story.length; i++) {
             if (story[i] != null) {
                 System.out.println((story.length - i) + ". " + story[i].toString());
             }
+        }*/
+        ArrayList<Subtask> story = historyManager.getHistory();
+        for(Subtask task : story ) {
+            System.out.println(task);
         }
     }
 
@@ -70,19 +74,25 @@ public class InMemoryTaskManager implements TaskManager {
     private Subtask createSubtask(String name) {
         int count = getNextIndex();
         Status status = Status.NEW;
-        return new Subtask(name, count, status);
+        Subtask taska = new Subtask(name, count, status);
+        historyManager.add(taska);
+        return taska;
     }
 
     private Task createTask(String name) {
         int count = getNextIndex();
         Status status = Status.NEW;
-        return new Task(name, count, status);
+        Task taska = new Task(name, count, status);
+        historyManager.add(taska);
+        return taska;
     }
 
     private Epic createEpic(String name) {
         int count = getNextIndex();
         Status status = Status.NEW;
-        return new Epic(name, count, status);
+        Epic taska = new Epic(name, count, status);
+        historyManager.add(taska);
+        return taska;
     }
 
     //data getters
@@ -125,20 +135,20 @@ public class InMemoryTaskManager implements TaskManager {
         return count;
     }
 
-    private void addHistory(Subtask t) {
+/*    private void addHistory(Subtask t) {
         for (int i = 0; i < story.length - 1; i++) {
             story[i] = story[i + 1];
         }
         story[story.length - 1] = t;
-    }
+    }*/
 
     private Object getById(int id) {
         if (tasks.containsKey(id)) {
             if (tasks.get(id) instanceof Task) {
-                addHistory((Task) tasks.get(id));
+                //addHistory((Task) tasks.get(id));
                 historyManager.add((Task) tasks.get(id));
             } else if (tasks.get(id) instanceof Epic) {
-                addHistory((Epic) tasks.get(id));
+                //addHistory((Epic) tasks.get(id));
                 historyManager.add((Epic) tasks.get(id));
             }
             return tasks.get(id);
@@ -146,19 +156,19 @@ public class InMemoryTaskManager implements TaskManager {
             for (int taskId : tasks.keySet()) {
                 if (tasks.get(taskId) instanceof Task t) {
                     if (t.content.containsKey(id)) {
-                        addHistory(t.content.get(id));
+                        //addHistory(t.content.get(id));
                         historyManager.add(t.content.get(id));
                         return t.content.get(id);
                     }
                 } else if (tasks.get(taskId) instanceof Epic e) {
                     if (e.content.containsKey(id)) {
-                        addHistory(e.content.get(id));
+                        //addHistory(e.content.get(id));
                         historyManager.add(e.content.get(id));
                         return e.content.get(id);
                     } else {
                         if (tasks.get(taskId) instanceof Task t) {
                             if (t.content.containsKey(id)) {
-                                addHistory(t.content.get(id));
+                                //addHistory(t.content.get(id));
                                 historyManager.add(t.content.get(id));
                                 return t.content.get(id);
                             }

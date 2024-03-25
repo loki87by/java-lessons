@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -39,12 +40,12 @@ public class Main {
                 } else {
                     deleteMenu();
                 }
-            } else if (userInput == 5) {
-                inMemoryTaskManager.history();
+            } else if (userInput >= 5 && userInput < 6) {
+                showNewHistory();
                 printMainMenu();
                 userInput = scanner.nextDouble();
-            } else if (userInput == 6) {
-                showNewHistory();
+            } else {
+                System.out.println("Ошибка ввода, попробуй еще раз");
                 printMainMenu();
                 userInput = scanner.nextDouble();
             }
@@ -66,9 +67,9 @@ public class Main {
         inMemoryTaskManager.setSubtask("оба!", 9);
     }
     private static void showNewHistory() {
-        HashMap<Integer, Subtask> history = historyManager.getHistory();
-        for (int key : history.keySet()) {
-            System.out.println((history.size()-key)+". "+history.get(key));
+        ArrayList<Subtask> story = historyManager.getHistory();
+        for(Subtask task : story ) {
+            System.out.println(task);
         }
     }
 
@@ -111,7 +112,6 @@ public class Main {
         System.out.println("3 - корректировать");
         System.out.println("4 - удалить");
         System.out.println("5 - история");
-        System.out.println("6 - история new");
         System.out.println("0 - выйти");
     }
 

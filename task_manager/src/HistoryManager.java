@@ -1,6 +1,7 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public interface HistoryManager {
     void add(Subtask task);
-    HashMap<Integer, Subtask> getHistory();
+    /*void remove(int id);*/
+    ArrayList<Subtask> getHistory();
 }
