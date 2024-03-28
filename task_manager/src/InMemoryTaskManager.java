@@ -202,7 +202,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void setEpic(String name, int count, String stat) throws IOException {
+    public void setEpic(String name, int count, String stat) {
         Epic epic = createEpic(name, count, stat);
         tasks.put(epic.id, epic);
     }
@@ -222,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void setTask(String name, int count, String stat, int id) throws IOException {
+    public void setTask(String name, int count, String stat, int id) {
         Task task = createTask(name, count, stat);
         if (id > 0) {
             for (int index : tasks.keySet()) {
@@ -256,7 +256,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void setSubtask(String data, int count, String stat, int id) throws IOException {
+    public void setSubtask(String data, int count, String stat, int id) {
         Subtask st = createSubtask(data, count, stat);
         for (int index : tasks.keySet()) {
             if (index == id) {

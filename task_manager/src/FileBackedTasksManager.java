@@ -38,7 +38,7 @@ HashMap<Integer, Object> tasks = InMemoryTaskManager.tasks;
                             fileWriter.write(stData);
                         }
                     } else if (task instanceof Epic && !((Epic) task).content.isEmpty()) {
-                        for (Subtask st: ((Epic) task).content.values()) {
+                        for (Task st: ((Epic) task).content.values()) {
                             int tid = st.getId();
                             String tclassName = String.valueOf(st.getClass()).substring(6);
                             String tname = st.getName();
@@ -46,8 +46,8 @@ HashMap<Integer, Object> tasks = InMemoryTaskManager.tasks;
                             String tcontent = getString(st);
                             String ttaskData = String.format("%d, %s, %s, %s, %s\n", tid, tclassName, tname, tstatus, tcontent);
                             fileWriter.write(ttaskData);
-                            if (st instanceof Task && !((Task) st).content.isEmpty()) {
-                                for (Subtask s: ((Task) st).content.values()) {
+                            if (!st.content.isEmpty()) {
+                                for (Subtask s: st.content.values()) {
                                     int sid = s.getId();
                                     String sclassName = String.valueOf(s.getClass()).substring(6);
                                     String sname = s.getName();
@@ -95,7 +95,7 @@ HashMap<Integer, Object> tasks = InMemoryTaskManager.tasks;
         return content;
     }
 
-    private void restoreData(String data) throws IOException {
+    private void restoreData(String data) {
         String[] tasksData = data.split("\n");
         HashMap<Integer, Integer> children = new HashMap<>();
         for(String task: tasksData) {
@@ -116,12 +116,10 @@ HashMap<Integer, Object> tasks = InMemoryTaskManager.tasks;
             if(children.containsKey(id)) {
                 parent=children.get(id);
             }
-            if(type.equals("Epic")) {
-                setEpic(name, id, status);
-            } else if(type.equals("Task")) {
-                setTask(name, id, status, parent);
-            } else if(type.equals("Subtask")) {
-                setSubtask(name, id, status, parent);
+            switch (type) {
+                case "Epic" -> setEpic(name, id, status);
+                case "Task" -> setTask(name, id, status, parent);
+                case "Subtask" -> setSubtask(name, id, status, parent);
             }
         }
     }

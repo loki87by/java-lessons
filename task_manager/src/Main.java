@@ -10,9 +10,8 @@ public class Main {
     static double secondInput;
     static String strParamInput;
     static int idInput;
-    static TaskManager inMemoryTaskManager = Managers.getDefault();
+    static TaskManager fileBackedTaskManager = Managers.getDefault();
     static HistoryManager historyManager = Managers.getDefaultHistory();
-    static FileBackedTasksManager fileBackedTaskManager = new FileBackedTasksManager();
 
     public static void main(String[] args) throws IOException {
         fileBackedTaskManager.init(tasks);
@@ -56,18 +55,6 @@ public class Main {
     }
 
     //default operations:
-    /*private static void setBasicTasks() throws IOException {
-        inMemoryTaskManager.setTask("генеральная уборка", 0);
-        inMemoryTaskManager.setSubtask("пнуть робот-пылесос", 1);
-        inMemoryTaskManager.setSubtask("включить стиралку", 1);
-        inMemoryTaskManager.setEpic("выспаться");
-        inMemoryTaskManager.setTask("лечь в кровать", 4);
-        inMemoryTaskManager.setSubtask("отложить телефон", 5);
-        inMemoryTaskManager.setSubtask("отдохнуть после проделанной работы", 1);
-        inMemoryTaskManager.setSubtask("я сказал отложить телефон!", 5);
-        inMemoryTaskManager.setTask("закрыть глаза", 4);
-        inMemoryTaskManager.setSubtask("оба!", 9);
-    }*/
     private static void showNewHistory() {
         ArrayList<Subtask> story = historyManager.getHistory();
         for(Subtask task : story ) {
