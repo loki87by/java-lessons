@@ -95,42 +95,119 @@ HashMap<Integer, Object> tasks = InMemoryTaskManager.tasks;
         return content;
     }
 
+    private void restoreData(String data) throws IOException {
+        String[] tasksData = data.split("\n");
+        HashMap<Integer, Integer> children = new HashMap<>();
+        for(String task: tasksData) {
+            String[] stringTaskData = task.split(", ");
+            int id = Integer.parseInt(stringTaskData[0]);
+            String type = stringTaskData[1];
+            String name = stringTaskData[2];
+            String status = stringTaskData[3];
+            String content = stringTaskData[4];
+            if (content.length()>1) {
+                String[] childs = content.split(";");
+                for(String child: childs){
+                    Integer currentId = Integer.parseInt(child);
+                    children.put(currentId, id);
+                }
+            }
+            int parent = 0;
+            if(children.containsKey(id)) {
+                parent=children.get(id);
+            }
+            if(type.equals("Epic")) {
+                setEpic(name, id, status);
+            } else if(type.equals("Task")) {
+                setTask(name, id, status, parent);
+            } else if(type.equals("Subtask")) {
+                setSubtask(name, id, status, parent);
+            }
+        }
+    }
+
+    private void restoreHistory(String data) {
+        String[] ids = data.split(",");
+        for (String id: ids) {
+            int curId = Integer.parseInt(id);
+            tasks = InMemoryTaskManager.tasks;
+            getById(curId);
+        }
+    }
+
+    private void readData() throws IOException {
+        if (Files.exists(pathToFile)) {
+            Reader fileReader = new FileReader("managerSaves.csv", StandardCharsets.UTF_8);
+
+            int data = fileReader.read();
+            StringBuilder sb = new StringBuilder();
+
+            while (data != -1) {
+                sb.append((char) data);
+                data = fileReader.read();
+            }
+            fileReader.close();
+            String fullText = sb.toString();
+            String[] dataParts = fullText.split("\n\n");
+            restoreData(dataParts[0]);
+            restoreHistory(dataParts[1]);
+        }
+    }
+
     @Override
     public void setEpic(String name) throws IOException {
         super.setEpic(name);
         tasks = InMemoryTaskManager.tasks;
         save();
-    };
+    }
+
+    @Override
+    public void init(HashMap<Integer, Object> ts) throws IOException {
+        super.init(ts);
+        readData();
+    }
+
+    @Override
+    public Object getById(int id) {
+        super.getById(id);
+        return null;
+    }
+
     @Override
     public void setTask(String name, int id) throws IOException {
         super.setTask(name, id);
         tasks = InMemoryTaskManager.tasks;
         save();
-    };
+    }
+
     @Override
     public void setSubtask(String data, int id) throws IOException {
         super.setSubtask(data, id);
         tasks = InMemoryTaskManager.tasks;
         save();
-    };
+    }
+
     @Override
     public void changeStatus(int id, String status) throws IOException {
         super.changeStatus(id, status);
         save();
-    };
+    }
+
     @Override
     public void rename(int id, String new_name) throws IOException {
         super.rename(id, new_name);
         save();
-    };
+    }
+
     @Override
     public void deleteAllTasks() throws IOException {
         super.deleteAllTasks();
         save();
-    };
+    }
+
     @Override
     public void removeTask(int id) throws IOException {
         super.removeTask(id);
         save();
-    };
+    }
 }

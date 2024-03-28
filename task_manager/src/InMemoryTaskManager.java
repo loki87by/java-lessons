@@ -67,6 +67,14 @@ public class InMemoryTaskManager implements TaskManager {
         return taska;
     }
 
+    //new entity creators
+    private Subtask createSubtask(String name, int count, String stat) {
+        Status status = Status.valueOf(stat);
+        Subtask taska = new Subtask(name, count, status);
+        historyManager.add(taska);
+        return taska;
+    }
+
     private Task createTask(String name) {
         int count = getNextIndex();
         Status status = Status.NEW;
@@ -75,9 +83,23 @@ public class InMemoryTaskManager implements TaskManager {
         return taska;
     }
 
+    private Task createTask(String name, int count, String stat) {
+        Status status = Status.valueOf(stat);
+        Task taska = new Task(name, count, status);
+        historyManager.add(taska);
+        return taska;
+    }
+
     private Epic createEpic(String name) {
         int count = getNextIndex();
         Status status = Status.NEW;
+        Epic taska = new Epic(name, count, status);
+        historyManager.add(taska);
+        return taska;
+    }
+
+    private Epic createEpic(String name, int count, String stat) {
+        Status status = Status.valueOf(stat);
         Epic taska = new Epic(name, count, status);
         historyManager.add(taska);
         return taska;
@@ -123,7 +145,7 @@ public class InMemoryTaskManager implements TaskManager {
         return count;
     }
 
-    private Object getById(int id) {
+    public Object getById(int id) {
         if (tasks.containsKey(id)) {
             if (tasks.get(id) instanceof Task) {
                 historyManager.add((Task) tasks.get(id));
@@ -169,13 +191,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     //entity setters
     @Override
-    public void init(HashMap<Integer, Object> tasks) {
+    public void init(HashMap<Integer, Object> tasks) throws IOException {
         InMemoryTaskManager.tasks = tasks;
     }
 
     @Override
     public void setEpic(String name) throws IOException {
         Epic epic = createEpic(name);
+        tasks.put(epic.id, epic);
+    }
+
+    @Override
+    public void setEpic(String name, int count, String stat) throws IOException {
+        Epic epic = createEpic(name, count, stat);
         tasks.put(epic.id, epic);
     }
 
@@ -194,8 +222,42 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void setTask(String name, int count, String stat, int id) throws IOException {
+        Task task = createTask(name, count, stat);
+        if (id > 0) {
+            for (int index : tasks.keySet()) {
+                if (index == id && tasks.get(index) instanceof Epic e) {
+                    e.content.put(task.id, task);
+                }
+            }
+        } else {
+            tasks.put(task.id, task);
+        }
+    }
+
+    @Override
     public void setSubtask(String data, int id) throws IOException {
         Subtask st = createSubtask(data);
+        for (int index : tasks.keySet()) {
+            if (index == id) {
+                if (tasks.get(index) instanceof Task t) {
+                    t.content.put(st.id, st);
+                }
+            } else if (tasks.get(index) instanceof Epic e) {
+                for (int indx : e.content.keySet()) {
+                    if (indx == id) {
+                        if (e.getContent().get(indx) instanceof Task t) {
+                            t.content.put(st.id, st);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setSubtask(String data, int count, String stat, int id) throws IOException {
+        Subtask st = createSubtask(data, count, stat);
         for (int index : tasks.keySet()) {
             if (index == id) {
                 if (tasks.get(index) instanceof Task t) {

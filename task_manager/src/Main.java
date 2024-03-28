@@ -15,14 +15,12 @@ public class Main {
     static FileBackedTasksManager fileBackedTaskManager = new FileBackedTasksManager();
 
     public static void main(String[] args) throws IOException {
-        //inMemoryTaskManager.init(tasks);
         fileBackedTaskManager.init(tasks);
-        setBasicTasks();
+        //setBasicTasks();
         printMainMenu();
         userInput = scanner.nextDouble();
         while (userInput != 0) {
             if (userInput >= 1 && userInput < 2) {
-                //inMemoryTaskManager.getAllTasks();
                 fileBackedTaskManager.getAllTasks();
                 printMainMenu();
                 userInput = scanner.nextDouble();
@@ -58,7 +56,7 @@ public class Main {
     }
 
     //default operations:
-    private static void setBasicTasks() throws IOException {
+    /*private static void setBasicTasks() throws IOException {
         inMemoryTaskManager.setTask("генеральная уборка", 0);
         inMemoryTaskManager.setSubtask("пнуть робот-пылесос", 1);
         inMemoryTaskManager.setSubtask("включить стиралку", 1);
@@ -69,7 +67,7 @@ public class Main {
         inMemoryTaskManager.setSubtask("я сказал отложить телефон!", 5);
         inMemoryTaskManager.setTask("закрыть глаза", 4);
         inMemoryTaskManager.setSubtask("оба!", 9);
-    }
+    }*/
     private static void showNewHistory() {
         ArrayList<Subtask> story = historyManager.getHistory();
         for(Subtask task : story ) {

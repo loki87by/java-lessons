@@ -70,6 +70,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         }
         return instance;
     }
+
     @Override
     public void add(Subtask task) {
         Node<Subtask> curr = list.getNodeByValue(task);
