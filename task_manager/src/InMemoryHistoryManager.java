@@ -77,25 +77,9 @@ public class InMemoryHistoryManager implements HistoryManager{
         list.linkLast(task);
     }
 
-   /* @Override
-    public void remove(int id) {
-
-    }*/
-
     @Override
     public ArrayList<Subtask> getHistory() {
         return list.getTasks();
     }
 
-    /*
-
-
-    @Override
-    public HashMap<Integer, Subtask> getHistory() {
-        return history;
-    }
-    @Override
-    public void add(Subtask task) {
-        history.put(history.size(), task);
-    }*/
 }

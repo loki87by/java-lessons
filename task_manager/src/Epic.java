@@ -12,6 +12,16 @@ public class Epic extends Subtask {
         return content;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
     //setters
     @Override
     public void setName(String name) {

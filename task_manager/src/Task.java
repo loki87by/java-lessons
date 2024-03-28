@@ -14,6 +14,11 @@ public class Task extends Subtask {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
     public void setStatus(Status status) {
         this.status = status;
     }

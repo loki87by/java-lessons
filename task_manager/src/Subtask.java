@@ -19,6 +19,10 @@ public class Subtask {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Status getStatus() {
         return status;
     }

@@ -1,10 +1,11 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
-    static HashMap<Integer, Object> tasks;
-    static Subtask[] story;
+    static HashMap<Integer, Object> tasks = new HashMap<>();
     static HistoryManager historyManager = Managers.getDefaultHistory();
+
 
     //user interface
     @Override
@@ -55,19 +56,6 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("none");
         }
         System.out.println("\u001b[36m----------------------------------------------------------------------\u001B[0m");
-    }
-
-    @Override
-    public void history() {
-        /*for (int i = 0; i < story.length; i++) {
-            if (story[i] != null) {
-                System.out.println((story.length - i) + ". " + story[i].toString());
-            }
-        }*/
-        ArrayList<Subtask> story = historyManager.getHistory();
-        for(Subtask task : story ) {
-            System.out.println(task);
-        }
     }
 
     //new entity creators
@@ -135,20 +123,11 @@ public class InMemoryTaskManager implements TaskManager {
         return count;
     }
 
-/*    private void addHistory(Subtask t) {
-        for (int i = 0; i < story.length - 1; i++) {
-            story[i] = story[i + 1];
-        }
-        story[story.length - 1] = t;
-    }*/
-
     private Object getById(int id) {
         if (tasks.containsKey(id)) {
             if (tasks.get(id) instanceof Task) {
-                //addHistory((Task) tasks.get(id));
                 historyManager.add((Task) tasks.get(id));
             } else if (tasks.get(id) instanceof Epic) {
-                //addHistory((Epic) tasks.get(id));
                 historyManager.add((Epic) tasks.get(id));
             }
             return tasks.get(id);
@@ -156,21 +135,18 @@ public class InMemoryTaskManager implements TaskManager {
             for (int taskId : tasks.keySet()) {
                 if (tasks.get(taskId) instanceof Task t) {
                     if (t.content.containsKey(id)) {
-                        //addHistory(t.content.get(id));
                         historyManager.add(t.content.get(id));
                         return t.content.get(id);
                     }
                 } else if (tasks.get(taskId) instanceof Epic e) {
                     if (e.content.containsKey(id)) {
-                        //addHistory(e.content.get(id));
                         historyManager.add(e.content.get(id));
                         return e.content.get(id);
                     } else {
-                        if (tasks.get(taskId) instanceof Task t) {
-                            if (t.content.containsKey(id)) {
-                                //addHistory(t.content.get(id));
-                                historyManager.add(t.content.get(id));
-                                return t.content.get(id);
+                        for (Task task: e.content.values()) {
+                            if (task.content.containsKey(id)) {
+                                historyManager.add(task.content.get(id));
+                                return task.content.get(id);
                             }
                         }
                     }
@@ -195,17 +171,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void init(HashMap<Integer, Object> tasks) {
         InMemoryTaskManager.tasks = tasks;
-        story = new Subtask[10];
     }
 
     @Override
-    public void setEpic(String name) {
+    public void setEpic(String name) throws IOException {
         Epic epic = createEpic(name);
         tasks.put(epic.id, epic);
     }
 
     @Override
-    public void setTask(String name, int id) {
+    public void setTask(String name, int id) throws IOException {
         Task task = createTask(name);
         if (id > 0) {
             for (int index : tasks.keySet()) {
@@ -219,18 +194,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void setSubtask(String data, int id) {
+    public void setSubtask(String data, int id) throws IOException {
         Subtask st = createSubtask(data);
         for (int index : tasks.keySet()) {
             if (index == id) {
                 if (tasks.get(index) instanceof Task t) {
                     t.content.put(st.id, st);
-                } else if (tasks.get(index) instanceof Epic e) {
-                    for (int indx : e.content.keySet()) {
-                        if (indx == id) {
-                            if (e.getContent().get(indx) instanceof Task t) {
-                                t.content.put(st.id, st);
-                            }
+                }
+            } else if (tasks.get(index) instanceof Epic e) {
+                for (int indx : e.content.keySet()) {
+                    if (indx == id) {
+                        if (e.getContent().get(indx) instanceof Task t) {
+                            t.content.put(st.id, st);
                         }
                     }
                 }
@@ -273,7 +248,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //change options
     @Override
-    public void changeStatus(int id, String status) {
+    public void changeStatus(int id, String status) throws IOException {
         Object task = getById(id);
         if (task instanceof Subtask s) {
             if (s instanceof Task t) {
@@ -288,7 +263,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void rename(int id, String new_name) {
+    public void rename(int id, String new_name) throws IOException {
         Object task = getById(id);
         if (task instanceof Subtask s) {
             s.setName(new_name);
@@ -297,12 +272,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     //remove options:
     @Override
-    public void deleteAllTasks() {
+    public void deleteAllTasks() throws IOException {
         tasks.clear();
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws IOException {
         if (!tasks.containsKey(id)) {
             for (int key : tasks.keySet()) {
                 if (tasks.get(key) instanceof Task t) {
@@ -327,4 +302,6 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.remove(id);
         }
     }
+
+
 }

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,15 +12,18 @@ public class Main {
     static int idInput;
     static TaskManager inMemoryTaskManager = Managers.getDefault();
     static HistoryManager historyManager = Managers.getDefaultHistory();
+    static FileBackedTasksManager fileBackedTaskManager = new FileBackedTasksManager();
 
-    public static void main(String[] args) {
-        inMemoryTaskManager.init(tasks);
+    public static void main(String[] args) throws IOException {
+        //inMemoryTaskManager.init(tasks);
+        fileBackedTaskManager.init(tasks);
         setBasicTasks();
         printMainMenu();
         userInput = scanner.nextDouble();
         while (userInput != 0) {
             if (userInput >= 1 && userInput < 2) {
-                inMemoryTaskManager.getAllTasks();
+                //inMemoryTaskManager.getAllTasks();
+                fileBackedTaskManager.getAllTasks();
                 printMainMenu();
                 userInput = scanner.nextDouble();
             } else if (userInput >= 2 && userInput < 3) {
@@ -54,7 +58,7 @@ public class Main {
     }
 
     //default operations:
-    private static void setBasicTasks() {
+    private static void setBasicTasks() throws IOException {
         inMemoryTaskManager.setTask("генеральная уборка", 0);
         inMemoryTaskManager.setSubtask("пнуть робот-пылесос", 1);
         inMemoryTaskManager.setSubtask("включить стиралку", 1);
@@ -115,7 +119,7 @@ public class Main {
         System.out.println("0 - выйти");
     }
 
-    private static void printAddMenu() {
+    private static void printAddMenu() throws IOException {
         System.out.println("Что плюсуем?");
         System.out.println("1 - Подзадачу");
         System.out.println("2 - Задачу");
@@ -124,7 +128,7 @@ public class Main {
         addMenu();
     }
 
-    private static void printCorrectMenu() {
+    private static void printCorrectMenu() throws IOException {
         System.out.println("Что правим?");
         System.out.println("1 - Статус");
         System.out.println("2 - Заголовок");
@@ -132,7 +136,7 @@ public class Main {
         correctMenu();
     }
 
-    private static void printDeleteMenu() {
+    private static void printDeleteMenu() throws IOException {
         System.out.println("Что удаляем?");
         System.out.println("1 - Запись");
         System.out.println("2 - Всё");
@@ -141,16 +145,16 @@ public class Main {
     }
 
     //submenu:
-    private static void addMenu() {
+    private static void addMenu() throws IOException {
         if (userInput == 2.1 || (Math.ceil(userInput) == 2 && secondInput == 1)) {
             getNameAndIdFromInput("");
-            inMemoryTaskManager.setSubtask(strParamInput, idInput);
+            fileBackedTaskManager.setSubtask(strParamInput, idInput);
         } else if (userInput == 2.2 || (Math.ceil(userInput) == 2 && secondInput == 2)) {
             getNameAndIdFromInput(" или 0 для новой задачи");
-            inMemoryTaskManager.setTask(strParamInput, idInput);
+            fileBackedTaskManager.setTask(strParamInput, idInput);
         } else if (userInput == 2.3 || (Math.ceil(userInput) == 2 && secondInput == 3)) {
             getNameFromInput();
-            inMemoryTaskManager.setEpic(strParamInput);
+            fileBackedTaskManager.setEpic(strParamInput);
         } else {
             System.out.println("что-то введено не корректно");
         }
@@ -158,13 +162,13 @@ public class Main {
         userInput = scanner.nextDouble();
     }
 
-    private static void correctMenu() {
+    private static void correctMenu() throws IOException {
         if (userInput == 3.1 || (Math.ceil(userInput) == 3 && secondInput == 1)) {
             getIdAndStatusFromInput("новый статус");
-            inMemoryTaskManager.changeStatus(idInput, strParamInput);
+            fileBackedTaskManager.changeStatus(idInput, strParamInput);
         } else if (userInput == 3.2 || (Math.ceil(userInput) == 3 && secondInput == 2)) {
             getIdAndStatusFromInput("новое имя");
-            inMemoryTaskManager.rename(idInput, strParamInput);
+            fileBackedTaskManager.rename(idInput, strParamInput);
         } else {
             System.out.println("что-то введено не корректно");
         }
@@ -172,12 +176,12 @@ public class Main {
         userInput = scanner.nextDouble();
     }
 
-    private static void deleteMenu() {
+    private static void deleteMenu() throws IOException {
         if (userInput == 4.1 || (Math.ceil(userInput) == 4 && secondInput == 1)) {
             getIdFromInput();
-            inMemoryTaskManager.removeTask(idInput);
+            fileBackedTaskManager.removeTask(idInput);
         } else if (userInput == 4.2 || (Math.ceil(userInput) == 4 && secondInput == 2)) {
-            inMemoryTaskManager.deleteAllTasks();
+            fileBackedTaskManager.deleteAllTasks();
         } else {
             System.out.println("что-то введено не корректно");
         }
